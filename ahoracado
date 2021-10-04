@@ -1,0 +1,147 @@
+import random
+IMÁGENES_AHORACADO = ['''
+
++---+
+|   |
+    |
+    |
+    |
+    |
+=======''','''
+
++----+
+|    |
+O    |
+     |
+     |
+     |
+=======''','''
+
+ +----+
+ |    |
+ O    |
+/     |
+      |
+      |
+========''','''
+
+ +-----+
+ |     |
+ O     |
+/|     |
+       |
+       |
+========= ''','''
+
+ +-----+
+ |     |
+ O     | 
+/|\    | 
+       |
+       |
+========''','''
+
+ +-----+
+ |     |
+ O     | 
+/|\    | 
+/      |
+       |
+========''','''
+
+ +-----+
+ |     |
+ O     | 
+/|\    | 
+/ \    |
+       |
+========''']
+Palabras = 'hormiga babulino tejon murcielago oso castor camello gato almeja cobra pantera coyote cuervo ciervo perro burro pato aguila huron zorro rana cabra ganso halcon leon lagarto llama togo mono alce raton mula salamandra nutria buho ganda paloma loro piton conejo carneto rata cuervo rinoceronte salmon foca tiburon oveja mofeta perozoso serpiente araña cigueña cisne tigre sapo trucha pavo tortuga comadreja ballena lobo wombat cebra otorrinolaringologo oftamologo cerebro'.split()
+
+def obtenerPalabraAlazar (listaDePalabras):
+#Esta funcion devuelve una cadena al azar de la lista de cadenas pasada como argumento
+    indiceDePalabras= random.randint (0, len(listaDePalabras) -1)
+    return listaDePalabras[indiceDePalabras]
+
+def mostrarTablero(IMÁGENES_AHORACADO, LETRASINCORRECTAS, letrasCorrectas, palabraSecreta) :
+    print(IMÁGENES_AHORACADO [len(LETRASINCORRECTAS)])
+    print()
+
+    print ('letras incorrectas:', end= '')
+    for letra in LETRASINCORRECTAS: 
+        print(letra, end='')
+    print()
+
+    espaciosVacíos= '_'* len(palabraSecreta)
+
+    for i in range(palabraSecreta): #completar los espacios vacios con las letras adivinadas
+        if palabraSecreta [i] in letrasCorrectas:
+            espaciosVacíos = espaciosVacíos[:i] + palabraSecreta[i] + espaciosVacíos[i+1:]
+
+    for letra in espaciosVacíos: #moatrar la palabra secreta con espacios entre cada letra
+        print(letra, end='')
+    print()
+
+def obtenerIntentos (letraProbadas):
+    #Devuelve la letra ingresada por el jugador, verifica que el jugador ha ingresado una letra y no otra cosa
+    while True:
+        print('Adivina una letra.')
+        intento= input()
+        intento= intento.lower()
+        if len(intento) !=1:
+            print('por favor, introduce una letra.')
+        elif intento in letraProbadas:
+            print('Ya has probado esa letra. Elige otra.')
+        elif intento not in 'abcdefghijklmnopqrstuvwxyzñ' :
+            print('Por favor ingresa una LETRA.')
+        else:
+            return intento
+
+def jugarDeNuevo():
+#Esta funcion devuelve true si el jugador quiere volver a jugar, por el contrario vuelve false
+    print('¿Quieres jugar de nmuevo? (Si o no)')
+    return input().lower().startswith('s')
+
+
+print('A H O R C A D O')
+letrasIncorrectas =''
+letrasCorrectas= ''
+palabrasSecretas= obtenerPalabraAlazar(Palabras)
+JuegoTerminado = False
+
+while True:
+    mostrarTablero(IMÁGENES_AHORACADO, letrasIncorrectas, letrasCorrectas, palabrasSecretas)
+
+    #Permite al jugador escribir una letra
+    intento= obtenerIntentos (letrasIncorrectas+letrasCorrectas)
+
+    if intento in palabrasSecretas:
+        letrasCorrectas = letrasCorrectas + intento
+
+        #Verfica si el jugador ha ganado
+        encontradoTodasLasletras= True
+        for i in range(len(palabrasSecretas)):
+            if palabrasSecretas[i]not in letrasCorrectas:
+                encontradoTodasLasletras= False
+                break
+            if encontradoTodasLasletras:
+                print('Que bien, la palabra secreta es "' + palabrasSecretas +'"Has ganado')
+                juegoTerminado = True
+        else:
+            letrasIncorrectas= letrasIncorrectas + intento
+
+            #Comprobar si el jugador ha agotado sus intentos y ha periddo
+            if len(letrasIncorrectas) == len(IMÁGENES_AHORACADO)-1:
+                mostrarTablero(IMÁGENES_AHORACADO, letrasIncorrectas,letrasCorrectas, palabrasSecretas)
+                print(' Te has quedado sin intentos \nDespues de ' + str(len(letrasIncorrectas))+'intentos fallidos y ' + str(len(letrasIncorrectas))+ 'intentos fallidos y ' + str(len(letrasCorrectas))+ 'aciertos, la palabra era "' + palabrasSecretas + '"')
+                juegoTerminado= True
+
+                #Preguntar al jugador si quiere volver a jugar pero solo si el juego ha temrinado
+            if juegoTerminado:
+                if jugarDeNuevo():
+                    letrasIncorrectas = ''
+                    letrasCorrectas = ''
+                    juegoTerminado=False
+                    palabrasSecretas= obtenerPalabraAlazar(Palabras)
+                else:
+                    break
